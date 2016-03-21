@@ -1,9 +1,9 @@
 {
 	"name": "nitro",
-	"version": "0.2.5",
-	"description": "Nitro is a Node.js application for simple and complex frontend development with a tiny footprint.",
-	"license": "MIT",
-	"repository": "namics/generator-nitro",
+	"version": "0.0.0",
+	"description": "Nitro is a Node.js application for simple and complex frontend development with a tiny footprint. This app is based on generator-nitro <%= version %>",
+	"license": "UNLICENSED",
+	"private": true,
 	"author": "The Nitro Team",
 	"engines": {
 		"node": ">=0.12 <5",
@@ -26,11 +26,11 @@
 		"browser-sync": "^2.11.1",
 		"compression": "^1.6.1",
 		"del": "^2.2.0",
-		"dot-object": "^1.4.0",
+		"dot-object": "^1.4.1",
 		"es6-promise": "^3.1.2",
 		"express": "^4.13.4",
 		"extend": "^3.0.0",
-		"globby": "^3.0.1",
+		"globby": "^4.0.0",
 		"gulp": "^3.9.1",
 		"gulp-autoprefixer": "^3.1.0",
 		"gulp-cached": "^1.1.0",<% if (options.clientTpl) { %>
@@ -49,24 +49,24 @@
 		"gulp-plumber": "^1.1.0",
 		"gulp-remember": "^0.3.0",
 		"gulp-rename": "^1.2.2",<% if (options.pre === 'scss') { %>
-		"gulp-sass": "^2.1.0",<% } %>
-		"gulp-size": "^2.0.0",
+		"gulp-sass": "^2.2.0",<% } %>
+		"gulp-size": "^2.1.0",
 		"gulp-sourcemaps": "^1.6.0",<% if (options.js === 'TypeScript') { %>
 		"typescript": "^1.5.0-beta",
 		"gulp-typescript": "^2.7.5", <% } %>
-		"gulp-uglify": "^1.5.2",<% if (options.clientTpl) { %>
+		"gulp-uglify": "^1.5.3",<% if (options.clientTpl) { %>
 		"gulp-wrap": "^0.11.0",<% } %>
 		"hbs": "^4.0.0",
-		"hbs-utils": "0.0.3",
+		"hbs-utils": "^0.0.3",
 		"i18next": "^1.10.6",
-		"imagemin-pngquant": "^4.2.1",
+		"imagemin-pngquant": "^4.2.2",
 		"jasmine-core": "^2.4.1",
 		"jshint": "^2.9.1",
 		"jshint-stylish": "^2.1.0",
-		"karma": "^0.13.21",
+		"karma": "^0.13.22",
 		"karma-chrome-launcher": "^0.2.2",
-		"karma-jasmine": "~0.3.7"<% if (options.clientTpl) { %>,
-        "merge-stream": "1.0.0"<% } %>
+		"karma-jasmine": "^0.3.8"<% if (options.clientTpl) { %>,
+		"merge-stream": "^1.0.0"<% } %>
 	},
 	"devDependencies": {
 		"gulp-install": "^0.6.0",
