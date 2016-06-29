@@ -205,14 +205,18 @@ module.exports = generators.Base.extend({
 
 			try {
 				// extract entries
-				zip.extractEntryTo('frontend-defaults-master/editorconfig/frontend.editorconfig', this.sourceRoot(), false, true);
-				zip.extractEntryTo('frontend-defaults-master/gitignore/nitro.gitignore', this.sourceRoot(), false, true);
-				zip.extractEntryTo('frontend-defaults-master/gitattributes/.gitattributes', this.sourceRoot(), false, true);
-				zip.extractEntryTo('frontend-defaults-master/jshintrc/.jshintrc', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/codequality/jshint/.jshintrc', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/codequality/jshint/nitro.jshintignore', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/codequality/stylelint/.stylelintrc', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/codequality/stylelint/nitro.stylelintignore', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/editorconfig/.editorconfig', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/repo/gitignore/nitro.gitignore', this.sourceRoot(), false, true);
+				zip.extractEntryTo('frontend-defaults-master/repo/gitattributes/.gitattributes', this.sourceRoot(), false, true);
 
 				// rename files
-				fs.renameSync(this.templatePath('frontend.editorconfig'), this.templatePath('.editorconfig'));
 				fs.renameSync(this.templatePath('nitro.gitignore'), this.templatePath('.gitignore'));
+				fs.renameSync(this.templatePath('nitro.jshintignore'), this.templatePath('.jshintignore'));
+				fs.renameSync(this.templatePath('nitro.stylelintignore'), this.templatePath('.stylelintignore'));
 			}
 			catch (e) {
 				this.log(chalk.red(e.message));
@@ -243,9 +247,8 @@ module.exports = generators.Base.extend({
 				'gulp/watch-assets.js',
 				'app/core/config.js',
 				'project/docs/nitro.md',
-				'components/molecules/Example/example.html',
-				'views/index.html',
-				'.jshintignore'
+				'components/molecules/example/example.html',
+				'views/index.html'
 			];
 			var ignores = [
 				// files to ignore
@@ -260,11 +263,11 @@ module.exports = generators.Base.extend({
 			];
 			var clientTplFiles = [
 				// files only for this.options.clientTpl===true
-				'components/molecules/Example/_data/example-template.json',
-				'components/molecules/Example/js/decorator/example-template.js',
-				'components/molecules/Example/template/example.hbs',
-				'components/molecules/Example/template/example.links.hbs',
-				'components/molecules/Example/template/partial/example.link.hbs',
+				'components/molecules/example/_data/example-template.json',
+				'components/molecules/example/js/decorator/example-template.js',
+				'components/molecules/example/template/example.hbs',
+				'components/molecules/example/template/example.links.hbs',
+				'components/molecules/example/template/partial/example.link.hbs',
 				'project/docs/client-templates.md',
 				'project/blueprints/component/template/component.hbs',
 				'gulp/compile-templates.js'
@@ -275,7 +278,7 @@ module.exports = generators.Base.extend({
 				'views/index.html',
 				'views/_partials/foot.html',
 				'views/_partials/head.html',
-				'components/molecules/Example/example.html',
+				'components/molecules/example/example.html',
 				'project/blueprints/component/component.html'
 			];
 

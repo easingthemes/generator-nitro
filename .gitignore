@@ -17,10 +17,13 @@ _.*
 atlassian-ide-plugin.xml
 
 # Namics frontend-defaults
-app/templates/.jshintrc
+app/templates/.editorconfig
 app/templates/.gitignore
 app/templates/.gitattributes
-app/templates/.editorconfig
+app/templates/.jshintrc
+app/templates/.jshintignore
+app/templates/.stylelintrc
+app/templates/.stylelintignore
 
 # Project
 node_modules/

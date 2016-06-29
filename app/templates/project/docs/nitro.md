@@ -3,18 +3,17 @@
 Nitro is a Node.js application for simple and complex frontend development with a tiny footprint.  
 It provides a proven but flexible structure to develop your frontend code, even in a large team.  
 Keep track of your code with a modularized frontend. This app and the suggested concepts could help - 
-[atomic design](http://bradfrost.com/blog/post/atomic-web-design/), [BEM](https://en.bem.info/method/definitions/) 
-and [terrific](http://terrifically.org).  
+[atomic design](http://bradfrost.com/blog/post/atomic-web-design/) and [BEM](https://en.bem.info/method/definitions/).  
 Nitro is simple, fast and flexible. Use this app for all your frontend work.
 
 ## Features
 
 * Simple project structure
 * CSS/JS concatenation and minification
-* LESS/SCSS support
-* Caching (LESS/SCSS) for optimal performance
-* Jasmine tests with Karma test runner
+* LESS/SCSS support (with caching for optimal performance)
+* Source Maps, Linting, PostCSS & Browsersync
 * Bower support
+* Jasmine tests with Karma test runner
 * Yeoman component generator<% if (options.clientTpl) { %>
 * [Client side templates](client-templates.md)<% } %>
 
@@ -28,10 +27,34 @@ and some dependencies installed globally.
 
     npm install -g yo bower gulp jasmine karma-cli generator-nitro
 
+Keep your global packages up to date:
+
+    npm outdated -g --depth=0
+
+Make an update if necessary:
+
+    npm update -g
+
+Install the project dependencies in the project root:
+
+    npm install
+
 ## Starting the app
 
-The Nitro app will run on port `8080` by default, the proxy on `8081` (only run with `develop` task). If you want the
-app to run on another port put them before the gulp task like this:
+Use
+
+    gulp develop
+
+... to start in development mode
+
+or
+
+    node server.js
+
+... to start the server only
+
+The Nitro app will run on port `8080` by default, the proxy on `8081` (only run with `develop` task).  
+If you want the app to run on another port put them before the gulp task like this:
 
     PORT=8000 PROXY=8001 gulp develop
 
@@ -54,20 +77,20 @@ For a better overview it is useful to define different types of components. It i
 subfolders like `atoms`, `molecules` & `organisms`  
 A component uses the following structure:
 
-    /Example
-    /Example/example.<%= options.viewExt %>
-    /Example/css/example.css
-    /Example/js/example.js
-    /Example/_data/example.json
+    /example
+    /example/example.<%= options.viewExt %>
+    /example/css/example.css
+    /example/js/example.js
+    /example/_data/example.json
 
-Terrific modifiers & decorators are created using the following conventions:
+Modifiers (JavaScript) and decorators (CSS) are created using the following conventions:
 
-    /Example/css/modifier/example-<modifier>.css
-    /Example/js/decorator/example-<decorator>.js
+    /example/css/modifier/example-<modifier>.css
+    /example/js/decorator/example-<decorator>.js
 
 Different data variations has to be placed in the `_data` folder:
 
-    /Example/_data/example-variant.json
+    /example/_data/example-variant.json
 
 ### Creating Components with yo
 
@@ -95,33 +118,60 @@ component name is case-sensitive.
 
 Nitro uses [handlebars](https://www.npmjs.com/package/hbs) as the view engine and provides custom helpers.
 
-Render the Example component. (file: `example.<%= options.viewExt %>`, data-file: `example.json`)
+Render the example component. (file: `example.<%= options.viewExt %>`, data-file: `example.json`)
 
-    {{component 'Example'}}
-    {{component 'Example', 'example'}}
+    {{component 'example'}}
+    {{component 'example', 'example'}}
 
-Render a "variant" from the Example component. (file: `example.<%= options.viewExt %>`, data-file: `example-variant.json`)
+Render a "variant" from the example component. (file: `example.<%= options.viewExt %>`, data-file: `example-variant.json`)
 
-    {{component 'Example' 'example-variant'}}
+    {{component 'example' 'example-variant'}}
     
 Another possibility to use the component helper is by providing hash options.
 
-    {{component name='Example' data='example-variant'}}
+    {{component name='example' data='example-variant'}}
 
 ...and if you really need this you may provide a second template file. (file: `example-2.<%= options.viewExt %>`, data-file: `example-variant.json`)
 
-    {{component name='Example' data='example-variant' template='example-2'}}
+    {{component name='example' data='example-variant' template='example-2'}}
 
 There also is a possibility to pass data to subcomponents by providing a data object as second parameter or as hash option.
 
-    {{component 'Example' exampleContent}}
-    {{component 'Example' data=exampleContent}}
+    {{component 'example' exampleContent}}
+    {{component 'example' data=exampleContent}}
+
+To be more flexible, you may also pass individual arguments to the component, which overrides the defaults.
+
+    {{component 'example' modifier='blue'}}
+
+#### Render Components with children
+
+Maybe using your component templates with transclusion could be helpful in some cases.
+
+    // example box template
+    <div class="a-box">
+        {{{children}}}
+    </div>
+
+Call it as block like this:
+
+    {{#component 'box'}}
+        {{component 'example'}}
+    {{/component}}
 
 ### Render Partials
 
 Render a partial (HTML snippet). Partials are placed in `views/_partials/` as `*.<%= options.viewExt %>` files (e.g. `head.<%= options.viewExt %>`).
 
     {{> head}}
+
+### Render Placeholders
+
+Using a placeholder is another way to output some markup. Placeholders are placed in a folder inside `views/_placeholders/` as `*.<%= options.viewExt %>` files.  
+The following two examples do the same and render the file `Content/example.<%= options.viewExt %>` from `views/_placeholders/`.
+
+    {{placeholder 'content' 'example'}}
+    {{placeholder name='content' template='example'}}
 
 ### Passing data
 
@@ -148,7 +198,7 @@ It's also possilbe to use a custom data file by requesting with a query param `?
 #### Dynamic view data
 
 If you want to use dynamic view data (i.e. using data from a database or data which is available in different views), 
-you can define those "routes" in the directory [`project/viewData`](project/viewData/). 
+you can define those "routes" in the directory [`project/viewData/`](../viewData/README.md). 
 
 #### Data per component
 
@@ -158,7 +208,7 @@ Component data will overwrite data from views. (Use as described above)
 
 You may overwrite data from views & components in request parameters.
 
-`?pageTitle=Testpage` will overwrite the the data for the handlebars expression `{{pageTitle}}`
+`?pageTitle=Testpage` will overwrite the data for the handlebars expression `{{pageTitle}}`
 
 It's also possible to use dot notation for object data:
 
@@ -166,8 +216,9 @@ It's also possible to use dot notation for object data:
 
 ## Assets
 
-Nitro's main feature is asset concatenation for CSS and JavaScript files. If changed, the files will be updated on
-every request, therefore you'll always get the latest version.
+One of Nitro's main feature is asset concatenation for CSS and JavaScript files. 
+If changed, the files will be updated on every change, 
+therefore you'll always get the latest version.
 
 ### Assets Configuration
 
@@ -183,7 +234,7 @@ You can configure the include order of your assets by defining patterns in `conf
         ],
         "app.js": [
             "!assets/js/somefile.js",
-            "assets/vendor/terrific/dist/terrific.min.js",
+            "assets/vendor/jquery/dist/jquery.min.js",
             "assets/vendor/terrific/dist/terrific.min.js",
             "assets/js/*.js",
             "components/**/js/*.js",
@@ -211,7 +262,7 @@ The order of these special patterns does not matter.
 
 #### Examples
 
-* `"!components/*/Test*"`         Exclude all components starting with `Test`
+* `"!components/*/test*"`         Exclude all components starting with `test`
 * `"!**/*-test.*"`                Exclude all filenames ending with `-test`.
 * `"+assets/css/mixins.less"`     Exclude `assets/css/mixins.less` but prepend to every compile call of every .less file
 
@@ -262,7 +313,7 @@ Some examples:
     {{t "test.example.sprintf" "alphabet" "a" "l" "p"}}
     {{t "test.example.interpolation" data}}
 
-The Second system uses brackets as interpolation pre- and suffixes and numbered or named placeholders:
+The second system uses brackets as interpolation and numbered or named placeholders:
 
     "test": {
         "example": {
@@ -289,18 +340,15 @@ Link to resources relatively to the `project`-folder **with** a leading slash.
 
 ### Upper & lower case letters
 
-Use all lowercase if possible.
+Use all lowercase if possible. (Exception: TerrificJS uses upper case for its namespace `T` and class names `T.Module.Example`)
 
-Exceptions:
+If you want to use uppercase letters (e.g. for component folders), keep care of case sensitive filesystems and use handlebars helpers with *exact* file and folder names. 
 
-* Component folders must match terrific classes, therefore they are case-sensitive.
-* TerrificJS uses upper case for its namespace `T` and class names `T.Module.Example`
+    {{component name='NavMain'}}
 
-Use the component helper with the *exact* component name:
+... looks for a template in the folder `NavMain`. 
 
-    {{component 'NavMain'}}
-
-Note that camel case ComponentNames are represented in CSS with dashes.
+Note that uppercase letters in component names are represented in CSS with dashes.
 
     Navigation   -> T.Module.Navigation   -> m-navigation
     NavMain      -> T.Module.NavMain      -> m-nav-main
@@ -308,28 +356,28 @@ Note that camel case ComponentNames are represented in CSS with dashes.
     
 ### Custom Handlebars helpers
 
-Custom handlebars will be automatically loaded if put into to `project/helpers` directory. An example could look like 
+Custom handlebars helpers will be automatically loaded if put into to `project/helpers` directory. An example could look like 
 this:
 
     module.exports = function(foo) {
         // Helper Logic
     };
 
-The helper name will automatically match the filename, so if you name your file `foo.js` your helper will be called  
-`foo`.
+The helper name will automatically match the filename, so if you name your file `foo.js` your helper will be called `foo`.
 
 ### JSON Endpoints
 
 If you need to mock service endpoints, you can put JSON files into a directory inside the `/public` directory as 
 those are directly exposed.
 
-`/public/service/posts.json` will be available under `/service/posts.json` and can be used for things like AJAX 
-requests.
+`/public/service/posts.json` will be available under `/service/posts.json` 
+and can be used for things like AJAX requests.
 
 ### Custom Routes
 
-If you need more custom functionality in endpoints you can put your custom routes with their logic into the 
-[`project/routes` directory](project/routes/).
+If you need more custom functionality in endpoints 
+you can put your custom routes with their logic 
+into the [`project/routes` directory](project/routes/).
 
 ### Using another Template Engine
 
@@ -357,32 +405,46 @@ Now Restart Nitro and it'll run with Nunjucks.
 **Be aware**, you'll need to adjust all your views and components to work with the new engine. 
 Nitro only provides a `component` helper for handlebars.
 
-## Commandline
+## Miscellaneous
+
+### Commandline
 
 Nitro uses [Gulp](http://gulpjs.com/) under the hood and can therefore be used on the CLI.
 
-## Contributing
+### Git Hooks
+
+Nitro tries to install a `post-merge` git hook with every `npm install`.
+
+This hook will:
+
+* run `npm install` if someone changes `package.json` 
+* run `bower install` if someone changes `bower.json`. 
+* sync this git hooks if someone changes one.
+ 
+You may [change this or add other hooks](../.githooks/README.md) in `project/.githooks`.
+
+### Contributing
 
 * For Bugs and Features please use [GitHub](https://github.com/namics/generator-nitro/issues)
-* Feel free to fork and send PRs. That's the best way to discuss your ideas.
+* Feel free to fork and send PRs to the current `develop` branch. That's the best way to discuss your ideas.
 
-## Example Project Includes
+### Example Project Includes
 
 * [YUI CSS Reset 3.18.1](http://yuilibrary.com/yui/docs/cssreset/)
 * Favicon & Home-Icons from Nitro (replace with your own)
-* Component `Example` and some styles in assets/css (you don't need them)
+* Component `example` and some styles in assets/css (you don't need them)
 
-### Bower Components
+#### Bower Components
 
 The following packages are always installed by the [app](#name) generator:
 
-* [jQuery 2.2.1](http://jquery.com/)
-* [TerrificJS 3.0.0-beta.9](https://github.com/brunschgi/terrificjs)<% if (options.clientTpl) { %>
+* [jQuery 2.2.4](http://jquery.com/)
+* [TerrificJS 3.0.0](https://github.com/brunschgi/terrificjs)<% if (options.clientTpl) { %>
 * [Handlebars 4.0.5](https://github.com/components/handlebars.js)<% } %>
 
 All of these can be updated with `bower update` as new versions are released.
 
-## Credits
+### Credits
 
 This app was generated with yeoman and the [generator-nitro](https://www.npmjs.com/package/generator-nitro) package (version <%= version %>).  
 Nitro is an alternative to [Terrific Micro](https://github.com/namics/terrific-micro) which is developed by Namics AG.

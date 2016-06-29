@@ -3,7 +3,7 @@ var fs = require('fs');
 var extend = require('extend');
 
 function factory() {
-	var base_path = path.normalize(__dirname + '../../../');
+	var base_path = path.normalize(path.join(__dirname, '../../'));
 	var options = {
 		encoding: 'utf-8',
 		flag: 'r'
@@ -15,8 +15,15 @@ function factory() {
 		view_directory: 'views',
 		view_file_extension: '<%= options.viewExt %>',
 		view_partials_directory: 'views/_partials',
-		view_data_directory: 'views/_data'
+		view_data_directory: 'views/_data',
+		placeholders_directory: 'views/_placeholders'
 	}, config.nitro);
+
+	config.code = extend(true, {
+		compatibility: {
+			browsers: ['> 1%', 'last 2 versions', 'ie 9', 'android 4', 'Firefox ESR', 'Opera 12.1']
+		}
+	}, config.code);
 
 	config.server = {
 		port: process.env.PORT || 8080,

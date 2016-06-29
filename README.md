@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Build Status][appveyor-image]][appveyor-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
 # Yeoman Nitro Generator
 
@@ -6,16 +6,16 @@
 
 Nitro is a Node.js application for simple and complex frontend development with a tiny footprint.  
 It provides a proven but flexible structure to develop your frontend code, even in a large team.  
-Keep track of your code with a modularized frontend. This app and the suggested [atomic design](http://bradfrost.com/blog/post/atomic-web-design/), [BEM](https://en.bem.info/method/definitions/) and [terrific](http://terrifically.org) concepts could help.  
-Nitro is simple, fast and flexible. Use this app for all your frontend work.
+Keep track of your code with a modularized frontend. This app and the suggested [atomic design](http://bradfrost.com/blog/post/atomic-web-design/) and [BEM](https://en.bem.info/method/definitions/) concepts could help.  
+Nitro is simple, fast and flexible. It works on OSX, Windows and Linux. Use this app for all your frontend work.
 
 ## Usage
 
 Before using, you need of course [node and npm](https://nodejs.org/) installed.  
 Nitro and the Nitro generator are tested with the current versions of the node.js releases 0.12 and 4 (LTS). So everything between should work.
-The node.js release 0.10 is no longer supported and it's not recommended to update node.js to release 5.
+It's not recommended to update node.js to release 5.
 
-Install `yo` and other required tools:
+Install `yo` and other required tools globally:
 
     npm install -g yo bower gulp jasmine karma-cli
 
@@ -26,6 +26,14 @@ If you want to use TypeScript, you need to install "tsd" (typescript definition 
 Install `generator-nitro`:
 
     npm install -g generator-nitro
+
+Keep your global packages up to date:
+
+    npm outdated -g --depth=0
+
+Make an update if necessary:
+
+    npm update -g
 
 ## Project Generation
 
@@ -94,5 +102,7 @@ Recent changes can be viewed on Github on the [Releases Page](https://github.com
 [npm-url]: https://npmjs.org/package/generator-nitro
 [travis-image]: https://travis-ci.org/namics/generator-nitro.svg?branch=master
 [travis-url]: https://travis-ci.org/namics/generator-nitro
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/w3sl7cglwwcb0f3a/branch/master?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/ernscht/generator-nitro/branch/master
 [daviddm-image]: https://david-dm.org/namics/generator-nitro.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/namics/generator-nitro

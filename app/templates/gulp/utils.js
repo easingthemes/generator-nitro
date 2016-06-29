@@ -2,36 +2,71 @@ var cfg = require('../app/core/config');
 var path = require('path');
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
+var browserSync;
+var assets = {};
 
-function getSourceFiles(ext) {
-	var assets = [];
+function getBrowserCompatibility() {
+	return cfg.code.compatibility.browsers;
+}
 
-	for (var key in cfg.assets) {
-		if (cfg.assets.hasOwnProperty(key) && ext === path.extname(key)) {
-			var asset = cfg.assets[key],
+function getBrowserSyncInstance() {
+	var name = 'Nitro' + cfg.server.port;
+	if (!browserSync) {
+		browserSync = require('browser-sync').create(name);
+	}
+	return browserSync;
+}
+
+function getSourcePatterns(ext) {
+
+	var type = typeof ext === 'string' && ( ext === 'js' || ext === 'css' ) ? ext : null;
+
+	if (!assets.hasOwnProperty('js') || !assets.hasOwnProperty('css')) {
+		updateSourcePatterns();
+	}
+
+	return type ?  assets[type] : assets;
+}
+
+function updateSourcePatterns() {
+	var key, ext, type, asset, result, patternKey, patternPath;
+
+	assets = {
+		css: [],
+		js: []
+	};
+
+	for (key in cfg.assets) {
+		if (cfg.assets.hasOwnProperty(key)) {
+			ext = path.extname(key);
+			if (ext) {
+				type = ext.replace(/[^a-z]/g, '');
+				asset = cfg.assets[key];
 				result = {
 					name: key,
 					deps: [],
 					src:  []
 				};
 
-			for (var fkey in asset) {
-				if (asset.hasOwnProperty(fkey)) {
-					var filepath = asset[fkey];
-					if (filepath.indexOf('+') === 0) {
-						result.deps.push(filepath.substr(1));
-					}
-					else {
-						result.src.push(filepath);
+				for (patternKey in asset) {
+					if (asset.hasOwnProperty(patternKey)) {
+						patternPath = asset[patternKey];
+						if (patternPath.indexOf('+') === 0) {
+							result.deps.push(patternPath.substr(1));
+						}
+						else {
+							result.src.push(patternPath);
+						}
 					}
 				}
+				assets[type].push(result);
 			}
-
-			assets.push(result);
 		}
 	}
+}
 
-	return assets;
+function getTask(task) {
+	return require('./' + task)(gulp, plugins);
 }
 
 function reloadConfig() {
@@ -39,9 +74,6 @@ function reloadConfig() {
 	return cfg;
 }
 
-function getTask(task) {
-	return require('./' + task)(gulp, plugins);
-}
 <% if (options.js === 'TypeScript') { %>
 function splitJsAssets(asset) {
 	var tsAssets = [],
@@ -61,9 +93,13 @@ function splitJsAssets(asset) {
 		js: jsAssets
 	};
 }<% } %>
+
 module.exports = {
-	getSourceFiles: getSourceFiles,
-	reloadConfig: reloadConfig,
-	getTask: getTask<% if (options.js === 'TypeScript') { %>,
+	getBrowserCompatibility: getBrowserCompatibility,
+	getBrowserSyncInstance: getBrowserSyncInstance,
+	getSourcePatterns: getSourcePatterns,
+	updateSourcePatterns: updateSourcePatterns,
+	getTask: getTask,
+	reloadConfig: reloadConfig<% if (options.js === 'TypeScript') { %>,
 	splitJsAssets: splitJsAssets<% } %>
 };
